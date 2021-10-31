@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <ilang/ila/instr_lvl_abs.h>
 #include <ilang/ilang++.h>
 
 #include "helpers.hpp"
@@ -32,10 +31,6 @@ ExprRef riscvILA_user::indexIntoGPR(const ExprRef& idxBits) {
 }
 
 
-ExprRef riscvILA_user::FetchFromMem(const ExprRef& addr) {
-  tmp_fetch_addr = addr;
-  return fetch_data;
-}
 ExprRef riscvILA_user::LoadFromMem(int size, const ExprRef& addr, InstrRef& instr) {
   instr.SetUpdate(load_en, BvConst(1,1));
   instr.SetUpdate(load_addr, addr);
@@ -55,25 +50,24 @@ void riscvILA_user::StoreToMem(int size, const ExprRef& addr,
 
 
 riscvILA_user::riscvILA_user() //int pc_init_val)
-    : model(InstrLvlAbs::New("riscv")), // define ila
+    : model("riscv"), // define ila
       pc(model.NewBvState("pc", XLEN)),
 
 #ifdef TRUE_MEM
-      mem(model.NewMemState("mem", MEM_WORD_ADDR_LEN, MEM_WORD)),
-      inst(FetchFromMem(mem, pc(31, 2))),
+      imem(model.NewMemState("mem", MEM_WORD_ADDR_LEN, MEM_WORD)),
+      inst(model.NewBvInput("inst", 32)),
 #else
-      fetch_addr ( model.NewBvState("fetch_addr" , 30 ) ) ,
-      fetch_data ( model.NewBvState("fetch_data" , 32 ) ) ,
       load_en    ( model.NewBvState("load_en"    , 1  ) ) ,
       load_addr  ( model.NewBvState("load_addr"  , 32 ) ) ,
       load_size  ( model.NewBvState("load_size"  , 3  ) ) , // 4 2 1
       load_data  ( model.NewBvState("load_data"  , 32 ) ) ,
+
       store_en   ( model.NewBvState("store_en"   , 1  ) ) ,
       store_addr ( model.NewBvState("store_addr" , 32 ) ) ,
       store_size ( model.NewBvState("store_size" , 3  ) ) ,
       store_data ( model.NewBvState("store_data" , 32 ) ) ,
-      tmp_fetch_addr(nullptr)    ,
-      inst(FetchFromMem(pc(31, 2))),  
+
+      inst(model.NewBvInput("inst", 32)),  
 #endif
 
       opcode(inst(6, 0)), rd(inst(11, 7)), rs1(inst(19, 15)), rs2(inst(24, 20)),
@@ -172,9 +166,7 @@ ExprRef riscvILA_user::CombineSlices(const ExprRef& word,
 }
 
 #ifndef TRUE_MEM
-#define INST_BOOKKEEP do { \
-    instr.SetUpdate(fetch_addr, tmp_fetch_addr); \
-  } while (0)
+#define INST_BOOKKEEP
 
 #define MEM_NO_CHANGE do {instr.SetUpdate(load_en, BvConst(0,1));instr.SetUpdate(store_en, BvConst(0,1));} while(0)
 #else 

@@ -33,10 +33,6 @@ private:
 #ifdef TRUE_MEM
   ExprRef mem;
 #else
-  ExprRef tmp_fetch_addr;
-  ExprRef fetch_addr;
-  ExprRef fetch_data;
-
   ExprRef load_en;
   ExprRef load_addr;
   ExprRef load_size;
@@ -93,14 +89,12 @@ protected:
     return Store(m, addr, data);
   }
 #else
-  virtual ExprRef FetchFromMem(const ExprRef& addr);
   virtual ExprRef LoadFromMem(int size, const ExprRef& addr, InstrRef& instr);
   virtual void StoreToMem(int size, const ExprRef& addr,
                              const ExprRef& data, InstrRef& instr);
 #endif
 
 public:
-  riscvILA_user(int pc_init_val);
   void addInstructions();
 };
 

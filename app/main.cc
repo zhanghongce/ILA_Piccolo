@@ -1,24 +1,17 @@
 #include "riscvIla.hpp"
 using namespace ilang;
 
-/// the function to parse commandline arguments
-VerilogVerificationTargetGenerator::vtg_config_t SetConfiguration();
-VerilogVerificationTargetGenerator::vtg_config_t HandleArguments(int argc, char **argv);
-
-void verifyNibblerInstCosa(
+void verify(
   Ila& model,
   const std::vector<std::string> & design_files,
   const std::string & varmap,
   const std::string & instcont
   ) {
-  VerilogGeneratorBase::VlgGenConfig vlg_cfg;
-  // vlg_cfg.pass_node_name = true;
-  vtg_cfg.CosaAddKeep = false;
+  RtlVerifyConfig cfg;
+  cfg.PonoAddKeep = false;
 
-  vtg_cfg.MemAbsReadAbstraction = true;
-  //vtg_cfg.target_select = vtg_cfg.INST;
-  //vtg_cfg.ForceInstCheckReset = true;
-  vtg_cfg.WrapperPreheader = "`define BSV_NO_INITIAL_BLOCKS 1";
+
+  cfg.WrapperPreheader = "`define BSV_NO_INITIAL_BLOCKS 1";
 
 
   std::string RootPath = "..";
@@ -31,19 +24,17 @@ void verifyNibblerInstCosa(
   for(auto && f : design_files)
     path_to_design_files.push_back( VerilogPath + f );
 
-  VerilogVerificationTargetGenerator vg(
+  IlaVerilogRefinemetChecker (
+      model,                          // model
       {},                             // no include
       path_to_design_files,           // designs
-      "mkCPU",             // top_module_name
+      "mkCPU",                        // top_module_name
       RefrelPath + varmap,            // variable mapping
       RefrelPath + instcont,          // conditions of start/ready
       OutputPath,                     // output path
-      model.get(),                    // model
-      VerilogVerificationTargetGenerator::backend_selector::COSA, // backend: COSA
-      vtg_cfg,  // target generator configuration
-      vlg_cfg); // verilog generator configuration
+      ModelCheckerSelection::PONO,    // backend: PONO
+      cfg); // verilog generator configuration
 
-  vg.GenerateTargets();
 }
 
 
@@ -71,7 +62,7 @@ int main(int argc, char **argv) {
   riscvILA_user piccolo;
   piccolo.addInstructions(); // 37 base integer instructions
 
-  verify(piccolo.model, design_files, "varmap-piccolo.json", "instcond-piccolo-multi.json");
+  verify(piccolo.model, design_files, "varmap.json", "instcond.json");
 
   // riscvILA_user riscvILA(0);
   return 0;
