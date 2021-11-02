@@ -21,7 +21,7 @@ class preprocessing:
         self.dir = base
         self.__files = self.collect_files()
         for f in self.__files:
-            self.__count_lines , self.__count_all_lines = calc_linenum(f)
+            self.__count_lines , self.__count_all_lines = self.calc_linenum(f)
             self.workload_ratio.append((self.__count_lines/self.__count_all_lines)*100)
             self.generated_line.append(self.__count_lines)
             self.isa_name.append(os.path.dirname(f).split('/')[-1])
