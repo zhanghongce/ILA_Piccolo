@@ -117,6 +117,7 @@ class draw:
     def draw_table(self):
         data = list(zip(self.__list1_isa,self.__list2_lines,self.__list3_work_ratio,self.__list4_reg))[:20]
         df = pd.DataFrame(data,columns=['ISA','Generated Line','Reduced Workload(%)','generated reg'],dtype=float)
+        df.to_json("experiment.json")
         #print(df.to_latex(index=False))
         print(df)
 
@@ -124,7 +125,7 @@ class draw:
         #print([].append(self.count_r))
         data = [['Piccolo','5-stage','RV32I',sum(self.count_r),sum(self.__list4_reg),sum(self.__list4_reg)/len(self.__list4_reg),sum(self.__list2_lines),sum(self.__list2_lines)/len(self.__list2_lines)]]
         #print(data)
-        df = pd.DataFrame(data,columns=['Prj','prj_des','ISA_des','Ref','Reg(sum)','Ave_reg','Line(sum)','Ave_line'],dtype=float)
+        df = pd.DataFrame(data,columns=['Prj','prj_des','ISA_des','Ref','Reg(sum)','Ave_reg','Line(sum)','Ave_line'],dtype=int)
         #df.reset_index(drop=True, inplace=True)
         df.to_json((os.getcwd().split('/'))[-1]+".json")
         print(df)
