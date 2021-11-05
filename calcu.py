@@ -122,9 +122,11 @@ class draw:
 
     def draw_conclusion_table(self):
         #print([].append(self.count_r))
-        data = [[sum(self.count_r),sum(self.__list4_reg),sum(self.__list4_reg)/len(self.__list4_reg),sum(self.__list2_lines),sum(self.__list2_lines)/len(self.__list2_lines)]]
+        data = [['Piccolo','5-stage','RV32I',sum(self.count_r),sum(self.__list4_reg),sum(self.__list4_reg)/len(self.__list4_reg),sum(self.__list2_lines),sum(self.__list2_lines)/len(self.__list2_lines)]]
         #print(data)
-        df = pd.DataFrame(data,columns=['Refinement','Generated Reg (sum)','Ave','Generated Line (sum)','Ave'],dtype=float)
+        df = pd.DataFrame(data,columns=['Prj','prj_des','ISA_des','Ref','Reg(sum)','Ave_reg','Line(sum)','Ave_line'],dtype=float)
+        #df.reset_index(drop=True, inplace=True)
+        df.to_json((os.getcwd().split('/'))[-1]+".json")
         print(df)
 
 if __name__ == '__main__':
