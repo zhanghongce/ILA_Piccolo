@@ -50,7 +50,7 @@ class preprocessing:
         filelist = []
         for parent,dirnames,filenames in os.walk(self.dir):
             for filename in filenames:
-                if filename.endswith('.v'):
+                if filename.endswith('.v') and ((parent.split('/'))[-1]!='invariants'):
                     filelist.append(os.path.join(parent,filename))
         return filelist
 
@@ -115,7 +115,7 @@ class draw:
         plt.show()
 
     def draw_table(self):
-        data = list(zip(self.__list1_isa,self.__list2_lines,self.__list3_work_ratio,self.__list4_reg))[:20]
+        data = list(zip(self.__list1_isa,self.__list2_lines,self.__list3_work_ratio,self.__list4_reg))[:]
         df = pd.DataFrame(data,columns=['ISA','Generated Line','Reduced Workload(%)','generated reg'],dtype=float)
         df.to_json("experiment.json")
         #print(df.to_latex(index=False))
