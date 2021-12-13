@@ -12,6 +12,9 @@ void verify(
 
 
   cfg.WrapperPreheader = "`define BSV_NO_INITIAL_BLOCKS 1";
+  cfg.PonoEngine = "bmc";
+  cfg.PonoOtherOptions = " -v 1 -k 30 ";
+  cfg.ForceInstCheckReset = true;
 
 
   std::string RootPath = "..";

@@ -84,6 +84,7 @@ riscvILA_user::riscvILA_user() //int pc_init_val)
 {
   for (int idx = 0; idx < 32; idx++)
     GPR.push_back(model.NewBvState("x" + std::to_string(idx), XLEN));
+  model.SetValid(BoolConst(true));
   //if ((pc_init_val & 0x3) != 0)
   //  std::cerr << "Warning: the initial pc is not valid: not aligned."
   //            << std::endl;
